@@ -1,0 +1,81 @@
+{*
+Example for AirQuality5 Click
+
+    Date          : apr 2018.
+    Author        : Katarina Perendic
+
+Test configuration dsPIC :
+    
+    MCU                : P33FJ256GP710A
+    Dev. Board         : EasyPIC Fusion v7
+    dsPIC Compiler ver : v7.0.1.0
+
+---
+
+Description :
+
+The application is composed of three sections :
+
+- System Initialization - Initializes I2C module and sets INT pin as INPUT
+- Application Initialization - Initializes driver init and configuration chip
+- Application Task - (code snippet) - Reads the values of CO, NH3 and NO2 sensor and logs data on USBUART every 500ms.
+*}
+program Click_AirQuality5_DSPIC;
+
+uses Click_AirQuality5_types, Click_AirQuality5_config;
+
+var
+    NO2_sensorData : uint16_t; 
+    NH3_sensorData : uint16_t; 
+    CO_sensorData : uint16_t; 
+    dataText : array[50] of char; 
+    
+procedure systemInit(); 
+begin
+
+    mikrobus_gpioInit(_MIKROBUS1, _MIKROBUS_INT_PIN, _GPIO_INPUT); 
+    mikrobus_i2cInit(_MIKROBUS1, @_AIRQ5_I2C_CFG[0]); 
+    mikrobus_logInit(_LOG_USBUART_A, 9600); 
+    Delay_ms(100); 
+
+end;
+
+procedure applicationInit(); 
+begin
+
+    airq5_i2cDriverInit(T_AIRQ5_P(@_MIKROBUS1_GPIO), T_AIRQ5_P(@_MIKROBUS1_I2C), 0x48); 
+    airq5_setConfiguration((((((((_AIRQ5_CONFIG_OS_SINGLE or _AIRQ5_CONFIG_PGA_2_048V) or _AIRQ5_CONFIG_SINGLE_MODE) or _AIRQ5_CONFIG_DATA_RATE_1600SPS) or _AIRQ5_CONFIG_COMP_MODE_TRADITIONAL) or _AIRQ5_CONFIG_COMP_POL_ACTIVE_LOW) or _AIRQ5_CONFIG_COMP_LAT_NOT_LATCH) or _AIRQ5_CONFIG_COMP_QUE_0CONV)); 
+
+end;
+
+procedure applicationTask(); 
+begin
+
+    NO2_sensorData := airq5_readSensorData(_AIRQ5_DATA_CHANNEL_NO2); 
+    NH3_sensorData := airq5_readSensorData(_AIRQ5_DATA_CHANNEL_NH3); 
+    CO_sensorData := airq5_readSensorData(_AIRQ5_DATA_CHANNEL_CO); 
+    IntToStr(NO2_sensorData, dataText); 
+    mikrobus_logWrite(' NO2 data: ', _LOG_TEXT); 
+    mikrobus_logWrite(dataText, _LOG_LINE); 
+    IntToStr(NH3_sensorData, dataText); 
+    mikrobus_logWrite(' NH3 data: ', _LOG_TEXT); 
+    mikrobus_logWrite(dataText, _LOG_LINE); 
+    IntToStr(CO_sensorData, dataText); 
+    mikrobus_logWrite(' CO data: ', _LOG_TEXT); 
+    mikrobus_logWrite(dataText, _LOG_LINE); 
+    mikrobus_logWrite(' -------- ', _LOG_LINE); 
+    Delay_ms(500); 
+
+end;
+
+begin
+    dataText[0] := 0;
+
+    systemInit(); 
+    applicationInit(); 
+    while (1) do 
+    begin 
+        applicationTask(); 
+    end;
+
+end.

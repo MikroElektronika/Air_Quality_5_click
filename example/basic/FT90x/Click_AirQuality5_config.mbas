@@ -1,0 +1,8 @@
+module Click_AirQuality5_config
+
+include Click_AirQuality5_types
+
+const
+    _AIRQ5_I2C_CFG as uint32_t[2] = (_I2CM_SPEED_MODE_STANDARD, _I2CM_SWAP_DISABLE)
+    
+end.
