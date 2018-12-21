@@ -192,40 +192,6 @@ uint16_t airq5_readSensorData(uint16_t channel_data);
  */
 uint8_t airq5_getInterrupt();
 
-/**
- * @brief Functions for calculation NO2 sensor data
- *
- * @param[in] NO2_Data   NO2 data which be calculation
- * @retval NO2 data in ppm
- */
-float airq5_getNO2Data(uint16_t NO2_data);
-
-/**
- * @brief Functions for calculation CO sensor data
- *
- * @param[in] CO_Data   CO data which be calculation
- * @param[out] dataBuffer  Buffer in which data is stored
- *
- * Data Buffer:
-      - dataBuffer[0] - CO in ppm
-      - dataBuffer[1] - CH4 in ppm
-      - dataBuffer[2] - H2 in ppm
-      - dataBuffer[3] - C2H5OH in ppm
- */
-void airq5_getCOData(uint16_t CO_Data, float *dataBuffer);
-
-/**
- * @brief Functions for calculation NH3 sensor data
- *
- * @param[in] NH3_Data   NH3 data which be calculation
- * @param[out] dataBuffer  Buffer in which data is stored
- *
- * Data Buffer:
-      - dataBuffer[0] - NH3 in ppm
-      - dataBuffer[1] - C3H8 in ppm
-      - dataBuffer[2] - C4H10 in ppm
- */
-void airq5_getNH3Data(uint16_t NH3_Data, float *dataBuffer);
 
 
 
